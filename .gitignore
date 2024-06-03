@@ -1,0 +1,5 @@
+.idea/
+/tmp/*
+/logs/*.txt
+.env
+deployments/postgres_data/*

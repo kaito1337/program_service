@@ -1,0 +1,44 @@
+version: "3.4"
+name: program_service
+
+services:
+  postgres:
+    container_name: postgres
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: program_service
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+    networks:
+      - pg-network
+
+  program_backend:
+    container_name: program_backend
+    build:
+      context: ../
+      dockerfile: ./deployments/Dockerfile
+    ports:
+      - "7070:7070"
+    depends_on:
+      - postgres
+    networks:
+      - pg-network
+    env_file:
+      - ../.env
+    environment:
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+      WEB_HOST: ${WEB_HOST}
+      WEB_PORT: ${WEB_PORT}
+networks:
+  pg-network:
+    driver: bridge
+
